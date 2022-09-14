@@ -1,0 +1,218 @@
+#include <iostream>
+#include <queue>
+#include <stack>
+
+using namespace std;
+
+struct node {
+    int key;
+    node* iz;
+    node* de;
+
+    node(){
+        key = -1;
+        iz = de = nullptr;
+    }
+    node(int a) {
+        key = a;
+        iz = de = nullptr;
+    }
+};
+
+struct tree {
+    node* raiz;
+    int deep = 10;
+    int elements = 0;
+
+    tree() {
+        raiz = new node();
+    }
+    void insert(int a) {
+        elements++;
+        if (raiz->key == -1) {
+            raiz->key = a;
+            return;
+        }
+        int count = 0;
+        node* temp = raiz;
+        node* parent=temp;
+        bool dir;
+        while (temp != nullptr) {
+            parent = temp;
+            if (a >= temp->key) {
+                temp = temp->de;
+                dir = 1;
+            }
+            else {
+                temp = temp->iz;
+                dir = 0;
+            }
+            count++;
+            //cout << "\n deep: " << deep << " count: " << count << " valor: " << parent->key << endl;
+        }
+        if (dir == 1) {
+            parent->de = new node(a);
+        }
+        else {
+            parent->iz = new node(a);
+        }
+        if (count > deep) {
+            //deep = count;
+           //cout << "\n| " << deep << " | \n";
+        }
+    }
+    void print_normal() {
+        queue<node*> Q;
+        Q.push(raiz);
+        while (!Q.empty()) {
+            if (Q.front()->iz != nullptr) {
+                Q.push(Q.front()->iz);
+            }
+            if (Q.front()->de != nullptr) {
+                Q.push(Q.front()->de);
+            }
+            cout << Q.front()->key<<" | ";
+            Q.pop();
+
+        }
+    }
+
+    int get_digit(int a) {
+        int count = 0;
+        while (a > 9) {
+            a = a / 10;
+            count++;
+        }
+        return count+1;
+    }
+
+    void print_up(int n) {
+        for (int i = 0; i < n; i++) {
+            cout << "\n";
+        }
+    }
+
+    void print_line(int n) {
+        for (int i = 0; i < n; i++) {
+            cout << "-";
+        }
+    }
+
+    void print_space(int n) {
+        for (int i = 0; i < n; i++) {
+            cout << " ";
+        }
+    }
+
+    void print_down() {
+        queue<node*> Q;
+        int count = 0, pot = 1, n = 5*deep;
+        Q.push(raiz);
+        int digit=get_digit(Q.front()->key);
+        while (!Q.empty()) {
+            if (pot == count) {
+                count = 0;
+                pot = pot * 2;
+                std::cout << "\n";
+                for (int i = 0; i < pot; i = i + 2) {
+                    print_space((n / pot) + digit);
+                    print_line((n / (pot / 2)) + digit);
+                }
+                std::cout << "\n";
+                for (int i = 0; i < pot; i=i+2) {
+                    print_space((n / pot) + digit -1);
+                    cout << "|";
+                    print_space((n / (pot / 2)) + digit -1);
+                    cout << "|";
+                }
+                std::cout << "\n";
+            }
+
+            if (Q.front()->iz != nullptr) {
+                Q.push(Q.front()->iz);
+            }
+            if (Q.front()->de != nullptr) {
+                Q.push(Q.front()->de);
+            }
+            if (count%2==0)
+                print_space((n / pot));
+            else
+                print_space((n/(pot / 2)));
+            cout << Q.front()->key;
+            count++;
+            Q.pop();
+        }
+    }
+    void print_up() {
+        stack<node*> Q1;
+        queue<node*> Q;
+        Q.push(raiz);
+        while (!Q.empty()) {
+            if (Q.front()->iz != nullptr) {
+                Q.push(Q.front()->iz);
+            }
+            if (Q.front()->de != nullptr) {
+                Q.push(Q.front()->de);
+            }
+            Q1.push(Q.front());
+            Q.pop();
+        }
+        int count = 0, pot = 1, n = 5 * deep;
+        for (int i = 1; i < 3; i++)
+            pot = 2 * pot;
+        int digit = get_digit(Q1.top()->key);
+        while (!Q1.empty()) {
+            if (pot == 1) {
+                Q.pop();
+                break;
+            }
+            if (pot == count) {
+                count = 0;
+                pot = pot / 2;
+                std::cout << "\n";
+                for (int i = 0; i < pot; i = i + 2) {
+                    print_space((n / pot) + digit);
+                    print_line((n / (pot / 2)) + digit);
+                }
+                std::cout << "\n";
+                for (int i = 0; i < pot; i = i + 2) {
+                    print_space((n / pot) + digit - 1);
+                    cout << "|";
+                    print_space((n / (pot / 2)) + digit - 1);
+                    cout << "|";
+                }
+                std::cout << "\n";
+            }
+
+            if (count % 2 == 0)
+                print_space((n / pot));
+            else
+                print_space((n / (pot / 2)));
+            cout << Q1.top()->key;
+            count++;
+            Q1.pop();
+        }
+    }
+};
+
+int main()
+{
+    tree A;
+    A.insert(40);
+    A.insert(30);
+    A.insert(20);
+    A.insert(10);
+    A.insert(10);
+    A.insert(25);
+    A.insert(11);
+    A.insert(11);
+    A.insert(11);
+    A.insert(11);
+    A.insert(11);
+    A.insert(11);
+    A.insert(11);
+    A.insert(11);
+    A.insert(11);
+    A.print_down();
+    A.print_up();
+}
